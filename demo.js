@@ -28,14 +28,14 @@ app.get('/',function (req,res) {
     })
 });
 
-app.post('/login', function (req, res) {
+/*app.post('/login', function (req, res) {
     if (!req.body) return res.sendStatus(400)
     res.send({message: 'welcome, ' + req.body.id})
-});
+});*/
 
 
 app.post('/test', function(req, res) {
-    query = "insert into list (id,name,surname) values("+req.body.id+",'"+ req.body.name +"','"+req.body.surname+"')";
+    query = "insert into list (id,name,surname,username,password) values("+req.body.id+",'"+ req.body.name +"','"+req.body.surname+"','"+req.body.username+"','"+req.body.password+"')";
     console.log(query);
     sql.executeSql(query, function (err, data) {
         if(err){
@@ -69,6 +69,26 @@ app.delete('/test/rmv',function (req,res) {
 });
 app.get('/about',function(req,res){
     res.sendFile(path.join(__dirname,'/about.html'))
+});
+
+app.post('/login',function (req,res) {
+    query = "select password from list where username='"+req.body.username+"'";
+    console.log(query);
+    sql.executeSql(query,function (err,data) {
+        if(err){
+            return res.send({error : err})
+        }
+        else
+        {
+            if(data[0].password == req.body.password)
+            {
+
+                console.log("Success");
+                res.sendFile(path.join(__dirname,'/login.html'));
+            }
+        }
+    });
+
 });
 
 
