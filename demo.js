@@ -3,6 +3,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
 
+
 // END modules
 
 var app = express();
@@ -16,11 +17,11 @@ app.use(bodyParser.json());
 
 //end middleware
 
-
+var sess;
 // define routes
-app.get('/',function (req,res) {
+app.get('/fetch',function (req,res) {
 
-    sql.executeSql("SELECT * FROM list", function (err, data) {
+    sql.executeSql("SELECT * FROM list where username='"+req.query.username+"'" ,function (err, data) {
       if(err){
           return res.send({error: err});
       }
@@ -35,7 +36,8 @@ app.get('/',function (req,res) {
 
 
 app.post('/test', function(req, res) {
-    query = "insert into list (id,name,surname,username,password) values("+req.body.id+",'"+ req.body.name +"','"+req.body.surname+"','"+req.body.username+"','"+req.body.password+"')";
+
+    query = "insert into list (name,surname,username,password) values('"+ req.body.name +"','"+req.body.surname+"','"+req.body.username+"','"+req.body.password+"')";
     console.log(query);
     sql.executeSql(query, function (err, data) {
         if(err){
@@ -45,8 +47,8 @@ app.post('/test', function(req, res) {
     })
 });
 
-app.put('/test/:id', function(req, res) {
-    sql.executeSql("update list set name='"+req.body.name+"' where id="+ req.params.id +"", function (err, data) {
+app.put('/test/:username', function(req, res) {
+    sql.executeSql("update list set name='"+req.body.name+"' where username="+ req.params.username +"", function (err, data) {
         if(err){
             return res.send({error: err});
         }
@@ -54,11 +56,11 @@ app.put('/test/:id', function(req, res) {
     })
 });
 
-app.delete('/test/rmv',function (req,res) {
+app.get('/test/rmv',function (req,res) {
 
     console.log("Received data: ", req.query);
 
-    query = "delete from list where id='"+req.query.id+"'";
+    query = "delete from list where username='"+req.query.username+"'";
     console.log(query);
     sql.executeSql(query,function (err,data) {
         if(err){
