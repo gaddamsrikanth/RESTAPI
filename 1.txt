@@ -1,0 +1,8 @@
+Today's Work
+-Created REST API
+-Added Functionalities which can insert/delete/update and fetch data from mysql database trough HTML page
+-Implemented end point methods
+Tommorows Work
+-Provide authentication through api
+
+
