@@ -3,14 +3,17 @@
 <body>
 
 <form action="http://0.0.0.0:8085/test" method="post">
-	Id:<br>
+    Id:<br><br>
 	<input type="text" name="id" value="1">
-  First name:<br>
+    First name:<br><br>
   <input type="text" name="name" value="Abhishek" autocomplete="on">
-  <br>
-  Last name:<br>
+  Last name:<br><br>
   <input type="text" name="surname" value="Master">
-  <br><br>
+  UserName:<br><br>
+    <input type="text" name="username">
+    Password:<br><br>
+    <input type="password" name="password">
+    <br><br>
   <input type="submit" value="Submit">
 </form>
 <form action="http://0.0.0.0:8085/test/rmv/" method="get">
@@ -20,6 +23,17 @@
 
   	<input type="submit" value="Submit">
 	
+</form>
+<br>
+<br>
+<br>
+<form action="http://0.0.0.0:8085/login" method="post">
+Enter UserName:
+    <input type="text" name="username">
+    <br>
+    Enter Password
+    <input type="password" name="password">
+    <input type="submit" value="Submit">
 </form>
 <a href="http://0.0.0.0:8085/about">About</a>
 
