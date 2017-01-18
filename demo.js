@@ -1,6 +1,7 @@
 // Modules
 var express = require('express');
 var bodyParser = require('body-parser');
+var path = require('path');
 
 // END modules
 
@@ -66,7 +67,9 @@ app.delete('/test/rmv',function (req,res) {
         return res.send({data : data});
     })
 });
-
+app.get('/about',function(req,res){
+    res.sendFile(path.join(__dirname,'/about.html'))
+});
 
 
 //end routes
