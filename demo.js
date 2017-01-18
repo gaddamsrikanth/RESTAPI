@@ -37,14 +37,23 @@ app.get('/fetch',function (req,res) {
 
 app.post('/test', function(req, res) {
 
-    query = "insert into list (name,surname,username,password) values('"+ req.body.name +"','"+req.body.surname+"','"+req.body.username+"','"+req.body.password+"')";
-    console.log(query);
-    sql.executeSql(query, function (err, data) {
-        if(err){
-            return res.send({error: err});
-        }
-        return res.send({data : data});
-    })
+    query = "select * from list where username = '"+req.body.username+"'";
+    sql.executeSql(query,function (err,data) {
+       if(err){
+           return res.send({error: err});
+       }else if(data.length > 0){
+           res.send({Message : "Username already taken!!"});
+       }else{
+           query = "insert into list (name,surname,username,password) values('"+ req.body.name +"','"+req.body.surname+"','"+req.body.username+"','"+req.body.password+"')";
+           console.log(query);
+           sql.executeSql(query, function (err, data) {
+               if(err){
+                   return res.send({error: err});
+               }
+               return res.send({data : data});
+           })
+       }
+    });
 });
 
 app.put('/test/:username', function(req, res) {
