@@ -3,23 +3,21 @@
 <body>
 
 <form action="http://0.0.0.0:8085/test" method="post">
-    Id:<br><br>
-	<input type="text" name="id" value="1">
-    First name:<br><br>
-  <input type="text" name="name" value="Abhishek" autocomplete="on">
-  Last name:<br><br>
-  <input type="text" name="surname" value="Master">
-  UserName:<br><br>
-    <input type="text" name="username">
-    Password:<br><br>
-    <input type="password" name="password">
+    <br><br>
+    First name:<input type="text" name="name" value="Abhishek" autocomplete="on">
+  <br><br>
+    Last name:<input type="text" name="surname" value="Master">
+  <br><br>
+    UserName: <input type="text" name="username">
+    <br><br>
+    Password:<input type="password" name="password">
     <br><br>
   <input type="submit" value="Submit">
 </form>
-<form action="http://0.0.0.0:8085/test/rmv/" method="get">
-	Id:<br>
+<form action="http://0.0.0.0:8085/fetch" method="get">
+	Username:<br>
 
-	<input type="text" name="id" value="1">
+	<input type="text" name="username" >
 
   	<input type="submit" value="Submit">
 	
@@ -31,7 +29,7 @@
 Enter UserName:
     <input type="text" name="username">
     <br>
-    Enter Password
+    Enter Password:
     <input type="password" name="password">
     <input type="submit" value="Submit">
 </form>
