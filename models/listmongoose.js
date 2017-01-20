@@ -6,7 +6,7 @@ var schema = mong.Schema;
 
 var user = new schema({
     password : String,
-    username : String,
+    username : { type : String,required: true ,unique : true},
     surname : String,
     name : String
 });
