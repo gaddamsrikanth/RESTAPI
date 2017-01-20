@@ -2,7 +2,7 @@
 <html>
 <body>
 
-<form action="http://0.0.0.0:8085/test" method="post">
+<form action="http://0.0.0.0:8085/search" method="post">
     <br><br>
     First name:<input type="text" name="name" value="Abhishek" autocomplete="on">
   <br><br>
@@ -14,7 +14,7 @@
     <br><br>
   <input type="submit" value="Submit">
 </form>
-<form action="http://0.0.0.0:8085/fetch" method="get">
+<form action="http://0.0.0.0:8085/mongo/user" method="get">
 	Username:<br>
 
 	<input type="text" name="username" >
@@ -25,7 +25,20 @@
 <br>
 <br>
 <br>
+<form action="http://0.0.0.0:8085/mongo/del" method="POST">
+    Username:<br>
+
+    <input type="text" name="username" >
+
+    <input type="submit" value="Submit">
+
+</form>
+<br>
+<br>
+<br>
 <form action="http://0.0.0.0:8085/login" method="post">
+
+
 Enter UserName:
     <input type="text" name="username">
     <br>
