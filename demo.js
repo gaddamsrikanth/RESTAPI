@@ -23,7 +23,25 @@ var sess;
 // define routes
 app.post('/search',function (req,res) {
     var l = new list();
+    if(req.body.name == "")
+    {
+        res.send("Please enter name");
+    }
+    else if(req.body.surname =="")
+    {
+        res.send("Please Enter surname");
 
+    }
+    else if(req.body.username == "")
+    {
+        res.send("Please enter username");
+    }
+    else if(req.body.password == "")
+    {
+        res.send("Please enter password");
+    }
+    else
+        {
     l.name = req.body.name;
     l.surname = req.body.surname;
     l.username = req.body.username;
@@ -38,6 +56,7 @@ app.post('/search',function (req,res) {
             res.send("user successfully registered!");
         }
     });
+        }
 });
 app.get('/mongo/user',function (req,res) {
     list.find({'username':req.query.username},function (err,data) {
