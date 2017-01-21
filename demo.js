@@ -2,8 +2,9 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var path = require('path');
-
-
+var mong = require('mongoose');
+var list = require('./models/listmongoose');
+mong.connect("mongodb://localhost:27017/list");
 // END modules
 
 var app = express();
@@ -14,11 +15,69 @@ var sql = require('./index');
 //middleware
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(bodyParser.json());
+//mong.Promise = global.Promise;
 
 //end middleware
 
 var sess;
 // define routes
+app.post('/search',function (req,res) {
+    var l = new list();
+    if(req.body.name == "")
+    {
+        res.send("Please enter name");
+    }
+    else if(req.body.surname =="")
+    {
+        res.send("Please Enter surname");
+
+    }
+    else if(req.body.username == "")
+    {
+        res.send("Please enter username");
+    }
+    else if(req.body.password == "")
+    {
+        res.send("Please enter password");
+    }
+    else
+        {
+    l.name = req.body.name;
+    l.surname = req.body.surname;
+    l.username = req.body.username;
+    l.password = req.body.password;
+
+    console.log(req.body);
+
+    l.save(function (err) {
+        if(err){
+            res.send(err);
+        }else{
+            res.send("user successfully registered!");
+        }
+    });
+        }
+});
+app.get('/mongo/user',function (req,res) {
+    list.find({'username':req.query.username},function (err,data) {
+        if(err){
+            res.send(err);
+        }else{
+            res.send(data);
+        }
+    });
+});
+
+app.post('/mongo/del',function (req,res) {
+   list.remove({'username' :req.body.username},function (err,data) {
+       if(err){
+           res.send(err);
+       }
+       else {
+           res.send("Successfully deleted");
+       }
+   })
+});
 app.get('/fetch',function (req,res) {
 
     sql.executeSql("SELECT * FROM list where username='"+req.query.username+"'" ,function (err, data) {
