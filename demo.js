@@ -6,18 +6,19 @@ var mong = require('mongoose');
 mong.Promise = require('bluebird');
 var list = require('./models/listmongoose');
 mong.connect("mongodb://localhost:27017/123");
+var morgan = require("morgan");
+var jwt = require('jsonwebtoken');
 // END modules
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
 
-
 //middleware
-app.use(bodyParser.urlencoded({extended: true}));
+app.set('secret', 'token1234567');
+app.use(morgan('dev'));
+app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-//
-
 //end middleware
 
 // define routes
@@ -62,7 +63,7 @@ app.post('/search', function (req, res) {
                     }
                     else
                     {
-                        res.send(data);
+                        res.send('HELLO');
                     }
                 });
             }
@@ -153,7 +154,7 @@ app.get('/about', function (req, res) {
     res.sendFile(path.join(__dirname, '/about.html'))
 });
 
-app.post('/login', function (req, res) {
+app.post('/login1', function (req, res) {
     query = "select password from list where username='" + req.body.username + "'";
     console.log(query);
     sql.executeSql(query, function (err, data) {
@@ -164,15 +165,51 @@ app.post('/login', function (req, res) {
             if (data[0].password == req.body.password) {
 
                 console.log("Success");
-                res.sendFile(path.join(__dirname, '/login.html'));
+                res.sendFile(path.join(__dirname, '/login1.html'));
             }
         }
     });
 
 });
+app.post('/login',function (req,res) {
+    list.find({"username" : req.body.username},function (err,data) {
+        if(err){
+            res.send(err);
+        }
+        else{
+
+            if(data.length == 0)
+            {
+                res.send("User not found");
+            }
+            else
+            {
+                console.log(data[0].username);
+                if(data[0].password = req.body.password){
+                    var token = jwt.sign(data[0],app.get('secret'),{
+                    expiresIn: '10m'
+                    });
+                    res.json({
+                        success : true,
+                        message : 'TOKENNNNNNNNNN!!!!!!',
+                        token : token
+
+                    });
+
+                }
+            }
+        }
+    });
+
+
+});
+app.get('/chk',function (req,res) {
+    res.send("Api is running ");
+});
 
 
 //end routes
+
 
 var server = app.listen(8085, function () {
 
@@ -181,3 +218,4 @@ var server = app.listen(8085, function () {
     console.log("Example app listening at http://%s:%s", host, port);
 
 })
+
