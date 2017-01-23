@@ -53,9 +53,11 @@ Enter UserName:
         var doc = document.forms[0];
         var xhttp = new XMLHttpRequest();
 
-        xhttp.onreadystatechange = function () {
-            alert(xhttp.response);
-        };
+        xhttp.onreadystatechange = function(){
+        if (xhttp.readyState==4 && xhttp.status==200){
+           var string=xhttp.responseText;
+           alert(string);
+        }}
 
         xhttp.open("POST","http://127.0.0.1:8085/search",true);
         xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
