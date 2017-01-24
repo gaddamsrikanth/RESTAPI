@@ -8,13 +8,26 @@ var list = require('./models/listmongoose');
 mong.connect("mongodb://localhost:27017/123");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
+var multer = require('multer');
 // END modules
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
 
+var storage = multer.diskStorage({
+    destination : function (req,file,callback) {
+        callback(null,'/home/lcom48/Desktop/RESTAPI/upload');
+    },
+    filename : function (req,file,callback) {
+        console.log(file);
+        callback(null,file.originalname)
+    }
+});
+var upload = multer({storage : storage}).single('photo');
+
 //middleware
+
 app.set('secret', 'token1234567');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
@@ -22,9 +35,27 @@ app.use(bodyParser.json());
 //end middleware
 
 // define routes
+app.get('/index',function (req,res) {
+    res.sendFile('/example/index.html');
+
+});
+
+app.post('/upload',function (req,res) {
+    upload(req,res,function (err) {
+        if(err)
+        {
+            console.log(err);
+        }
+        console.log(req.file);
+        res.end('File uploaded');
+        console.log('Uploaded');
+    })
+
+});
 app.post('/search', function (req, res) {
     var l = new list();
     if (req.body.name == "") {
+
         res.send("Please enter name");
     }
     else if (req.body.surname == "") {
