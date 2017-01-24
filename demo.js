@@ -24,7 +24,7 @@ var storage = multer.diskStorage({
         callback(null,file.originalname)
     }
 });
-var upload = multer({storage : storage}).single('photo');
+var upload = multer({storage : storage}).array('photo',5);
 
 //middleware
 
@@ -35,9 +35,8 @@ app.use(bodyParser.json());
 //end middleware
 
 // define routes
-app.get('/index',function (req,res) {
-    res.sendFile('/example/index.html');
-
+app.get('/',function (req,res) {
+    res.sendFile(path.join(__dirname, '/1.html'));
 });
 
 app.post('/upload',function (req,res) {
