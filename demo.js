@@ -9,6 +9,8 @@ mong.connect("mongodb://localhost:27017/123");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
+var file = require('./models/file');
+
 // END modules
 
 var app = express();
@@ -17,10 +19,12 @@ var sql = require('./index');
 
 var storage = multer.diskStorage({
     destination : function (req,file,callback) {
-        callback(null,'/home/lcom48/Desktop/RESTAPI/upload');
+        req.body.path = './upload/';
+        callback(null,'./upload');
     },
     filename : function (req,file,callback) {
         console.log(file);
+        req.body.file = file.originalname;
         callback(null,file.originalname)
     }
 });
@@ -35,9 +39,9 @@ app.use(bodyParser.json());
 //end middleware
 
 // define routes
-app.get('/',function (req,res) {
+/*app.get('/',function (req,res) {
     res.sendFile(path.join(__dirname, '/1.html'));
-});
+});*/
 
 app.post('/upload',function (req,res) {
     upload(req,res,function (err) {
@@ -45,9 +49,29 @@ app.post('/upload',function (req,res) {
         {
             console.log(err);
         }
-        console.log(req.file);
-        res.end('File uploaded');
-        console.log('Uploaded');
+        var f = new file();
+        f.filename = req.body.file;
+        f.filepath = req.body.path+req.body.file;
+
+        f.save(function (err,data) {
+            if(err){
+                res.send(err);
+            }else{
+                res.send(data)
+            }
+        });
+
+    })
+
+});
+
+app.get('/download',function (req,res) {
+    file.find({},function (err,data) {
+        if(err){
+            res.send(err);
+        }else{
+            res.sendFile(path.join(__dirname,data[data.length-1].filepath));
+        }
     })
 
 });
