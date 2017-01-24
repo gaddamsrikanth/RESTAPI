@@ -46,8 +46,25 @@ Enter UserName:
     <input type="password" name="password">
     <input type="submit" value="Submit">
 </form>
+<button onclick="register()">ahdkawbhi</button>
 <a href="http://0.0.0.0:8085/about">About</a>
+<script>
+    function register() {
+        var doc = document.forms[0];
+        var xhttp = new XMLHttpRequest();
 
+        xhttp.onreadystatechange = function(){
+        if (xhttp.readyState==4 && xhttp.status==200){
+           var string=xhttp.responseText;
+           alert(string);
+        }}
+
+        xhttp.open("POST","http://127.0.0.1:8085/search",true);
+        xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        //xhttp.send(doc);
+        xhttp.send("name="+doc.name.value+"&surname="+doc.surname.value+"&username="+doc.username.value+"&password="+doc.password.value);
+    }
+</script>
 
 </body>
 </html>
