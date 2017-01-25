@@ -8,23 +8,73 @@ var list = require('./models/listmongoose');
 mong.connect("mongodb://localhost:27017/123");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
+var multer = require('multer');
+var file = require('./models/file');
+
 // END modules
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
 
+var storage = multer.diskStorage({
+    destination : function (req,file,callback) {
+        req.body.path = './upload/';
+        callback(null,'./upload');
+    },
+    filename : function (req,file,callback) {
+        console.log(file);
+        req.body.file = file.originalname;
+        callback(null,file.originalname)
+    }
+});
+var upload = multer({storage : storage}).array('photo',5);
+
 //middleware
+
 app.set('secret', 'token1234567');
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 //end middleware
 
-// define routes
+
+app.post('/upload',function (req,res) {
+    upload(req,res,function (err) {
+        if(err)
+        {
+            console.log(err);
+        }
+        var f = new file();
+        f.filename = req.body.file;
+        f.filepath = req.body.path+req.body.file;
+
+        f.save(function (err,data) {
+            if(err){
+                res.send(err);
+            }else{
+                res.send(data)
+            }
+        });
+
+    })
+
+});
+
+app.get('/download',function (req,res) {
+    file.find({},function (err,data) {
+        if(err){
+            res.send(err);
+        }else{
+            res.sendFile(path.join(__dirname,data[data.length-1].filepath));
+        }
+    })
+
+});
 app.post('/search', function (req, res) {
     var l = new list();
     if (req.body.name == "") {
+
         res.send("Please enter name");
     }
     else if (req.body.surname == "") {
