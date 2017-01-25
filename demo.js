@@ -151,10 +151,7 @@ app.get('/fetch', function (req, res) {
     })
 });
 
-/*app.post('/login', function (req, res) {
- if (!req.body) return res.sendStatus(400)
- res.send({message: 'welcome, ' + req.body.id})
- });*/
+
 
 
 app.post('/test', function (req, res) {
