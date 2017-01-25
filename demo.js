@@ -38,10 +38,6 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 //end middleware
 
-// define routes
-/*app.get('/',function (req,res) {
-    res.sendFile(path.join(__dirname, '/1.html'));
-});*/
 
 app.post('/upload',function (req,res) {
     upload(req,res,function (err) {
