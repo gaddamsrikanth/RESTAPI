@@ -208,11 +208,11 @@ app.post('/mongo/del', function (req, res) {
 });
 app.get('/fetch', function (req, res) {
 
-    sql.executeSql("SELECT * FROM list where username='" + req.query.username + "'", function (err, data) {
+    sql.executeSql("SELECT * FROM list", function (err, data) {
         if (err) {
             return res.send({error: err});
         }
-        return res.send({data: data});
+        return res.send(data);
     })
 });
 

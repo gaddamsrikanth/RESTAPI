@@ -1,7 +1,8 @@
 var mysql = require('mysql');
 var dbconfig = {
     host     : 'localhost',
-    user     : 'root',
+    user     : 'abcd',
+    password : 'abcd',
     database : 'test'
 };
 
