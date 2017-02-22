@@ -5,17 +5,18 @@ var path = require('path');
 var mong = require('mongoose');
 mong.Promise = require('bluebird');
 var list = require('./models/listmongoose');
-mong.connect("mongodb://localhost:27017/123");
+//mong.connect("mongodb://localhost:27017/db");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-var file = require('./models/file');
+//var file = require('./models/file');
 
 // END modules
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
+var count = 0;
 
 var storage = multer.diskStorage({
     destination : function (req,file,callback) {
@@ -121,6 +122,28 @@ app.post('/search', function (req, res) {
 
     }
 });
+
+app.post('/req',function (req,res) {
+    var l = new list();
+    console.log("ABCD")
+    if(req.body.name == "")
+    {
+        console.log("No Entry")
+    }
+    l.name = req.body.name;
+    l.password = req.body.password;
+    l.save(function (err,data) {
+        if(err)
+        {
+            res.send(err);
+        }
+        else
+        {
+            res.send('HELLO');
+        }
+    });
+})
+
 app.get('/mongo/user/:id', function (req, res) {
     list.find({'username': req.query.username}, function (err, data) {
         if (err) {
@@ -129,6 +152,48 @@ app.get('/mongo/user/:id', function (req, res) {
             res.send(data);
         }
     });
+});
+
+app.get('/mongoose/fetch/:pageNo', function (req, res) {
+
+        list.find(function (err, data) {
+            if (err) {
+                res.send(err);
+            } else {
+                if (data.length != 0) {
+                    console.log(data);
+                    res.send(data);
+                }
+                else {
+                    res.send("END");
+                }
+            }
+        }).skip(parseInt(req.params.pageNo) * 10).limit(10);
+});
+
+
+app.get('/mongoose/fet/:pageNo', function (req, res) {
+    var perpage = 5;
+    var pageNo = parseInt(req.params.pageNo) || 0;
+    var total = 0;
+    var totalpage = 0;
+    list.find()
+        .then(function (category) {
+            console.log("******************");
+            total = category.length;
+            console.log(total);
+            console.log("******************");
+            console.log(Math.ceil(total/perpage));
+            totalpage = Math.ceil(total/perpage);
+            return list.find().skip(pageNo*perpage).limit(perpage);
+        })
+        .then(function (category) {
+            // var data = { pageNo: pageNo, totalPage: totalpage, category: category};
+            res.send(data);
+        })
+        .catch(function (err) {
+            res(err);
+        })
 });
 
 app.post('/mongo/del', function (req, res) {
