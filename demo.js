@@ -5,7 +5,7 @@ var path = require('path');
 var mong = require('mongoose');
 mong.Promise = require('bluebird');
 var list = require('./models/listmongoose');
-//mong.connect("mongodb://localhost:27017/db");
+mong.connect("mongodb://localhost:27017/db");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
@@ -165,7 +165,8 @@ app.get('/mongoose/fetch/:pageNo', function (req, res) {
                     res.send(data);
                 }
                 else {
-                    res.send("END");
+                    console.log("end")
+                    res.send({msg:"END"});
                 }
             }
         }).skip(parseInt(req.params.pageNo) * 10).limit(10);
@@ -206,27 +207,37 @@ app.post('/mongo/del', function (req, res) {
         }
     })
 });
-app.get('/fetch', function (req, res) {
-
-    sql.executeSql("SELECT * FROM list", function (err, data) {
+app.post('/fetchd/', function (req, res) {
+    var user = req.body.username;
+    var pass = req.body.password;
+    sql.executeSql("SELECT * FROM list where username= '" + user + "' AND password= '"+ pass +"'" , function (err, data) {
         if (err) {
+            console.log(err)
             return res.send({error: err});
         }
-        return res.send(data);
+        else if(data.length == 1){
+
+            res.send({resp : "Success"});
+        }
+        else{
+            res.send({resp : "Failed"});
+        }
+        console.log(data);
     })
 });
 
 
 
 
-app.post('/test', function (req, res) {
-
+app.post('/reg', function (req, res) {
     query = "select * from list where username = '" + req.body.username + "'";
     sql.executeSql(query, function (err, data) {
         if (err) {
+            console.log(err)
             return res.send({error: err});
         } else if (data.length > 0) {
-            res.send({Message: "Username already taken!!"});
+            console.log("1");
+            res.send({resp : "Taken"});
         } else {
             query = "insert into list (name,surname,username,password) values('" + req.body.name + "','" + req.body.surname + "','" + req.body.username + "','" + req.body.password + "')";
             console.log(query);
@@ -234,7 +245,8 @@ app.post('/test', function (req, res) {
                 if (err) {
                     return res.send({error: err});
                 }
-                return res.send({data: data});
+                return res.send({resp : "Success"});
+                console.log("2");
             })
         }
     });

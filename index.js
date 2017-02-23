@@ -25,8 +25,9 @@ exports.executeSql = function (sql, callback) {
         }
         else {
             connect.end();
-            console.log(err);
+             console.log(err);
             err.status = 500;
+            callback(err, null);
         }
     });
 };
