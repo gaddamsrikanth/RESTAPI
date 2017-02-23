@@ -5,7 +5,7 @@ var path = require('path');
 var mong = require('mongoose');
 mong.Promise = require('bluebird');
 var list = require('./models/listmongoose');
-mong.connect("mongodb://localhost:27017/db");
+//mong.connect("mongodb://localhost:27017/db");
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
@@ -207,10 +207,12 @@ app.post('/mongo/del', function (req, res) {
         }
     })
 });
+
+
 app.post('/fetchd/', function (req, res) {
     var user = req.body.username;
     var pass = req.body.password;
-    sql.executeSql("SELECT * FROM list where username= '" + user + "' AND password= '"+ pass +"'" , function (err, data) {
+    sql.executeSql("SELECT * FROM users where username= '" + user + "' AND password= '"+ pass +"'" , function (err, data) {
         if (err) {
             console.log(err)
             return res.send({error: err});
@@ -227,10 +229,8 @@ app.post('/fetchd/', function (req, res) {
 });
 
 
-
-
 app.post('/reg', function (req, res) {
-    query = "select * from list where username = '" + req.body.username + "'";
+    query = "select * from users where username = '" + req.body.username + "'";
     sql.executeSql(query, function (err, data) {
         if (err) {
             console.log(err)
@@ -239,7 +239,7 @@ app.post('/reg', function (req, res) {
             console.log("1");
             res.send({resp : "Taken"});
         } else {
-            query = "insert into list (name,surname,username,password) values('" + req.body.name + "','" + req.body.surname + "','" + req.body.username + "','" + req.body.password + "')";
+            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.locality+"')";
             console.log(query);
             sql.executeSql(query, function (err, data) {
                 if (err) {

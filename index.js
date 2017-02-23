@@ -3,7 +3,7 @@ var dbconfig = {
     host     : 'localhost',
     user     : 'abcd',
     password : 'abcd',
-    database : 'test'
+    database : 'Sample'
 };
 
 exports.executeSql = function (sql, callback) {
