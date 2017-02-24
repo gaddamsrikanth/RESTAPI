@@ -312,18 +312,29 @@ app.get('/about', function (req, res) {
     res.sendFile(path.join(__dirname, '/about.html'))
 });
 
-app.post('/login1', function (req, res) {
-    query = "select password from list where username='" + req.body.username + "'";
-    console.log(query);
+app.post('/loc', function (req, res) {
+    query = "select * from users where username='" + req.body.username + "'";
     sql.executeSql(query, function (err, data) {
         if (err) {
+            console.log(err)
             return res.send({error: err})
         }
         else {
-            if (data[0].password == req.body.password) {
+            if (data.length > 0) {
+                console.log("ABC")
+                query = "update users set location='" + req.body.location + "'where username='"+req.body.username+"'";
+                sql.executeSql(query,function (err,data) {
+                    if(err){
+                        console.log(err)
+                        res.send(err)
+                    }
+                    else{
+                        console.log(data)
+                        res.send("Success")
+                    }
 
-                console.log("Success");
-                res.sendFile(path.join(__dirname, '/login1.html'));
+                })
+
             }
         }
     });
