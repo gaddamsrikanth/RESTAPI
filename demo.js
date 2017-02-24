@@ -228,6 +228,40 @@ app.post('/fetchd/', function (req, res) {
     })
 });
 
+app.post('/user/', function (req, res) {
+    var user = req.body.username;
+    var pass = req.body.password;
+    sql.executeSql("SELECT * FROM users where username= '" + user + "'" , function (err, data) {
+        if (err) {
+            console.log(err)
+            return res.send({error: err});
+        }
+        else if(data.length == 1){
+
+            res.send(data);
+        }
+        else{
+            res.send({resp : "Failed"});
+        }
+        console.log(data);
+    })
+});
+
+app.post('/friends/', function (req, res) {
+    var user = req.body.username;
+    var pass = req.body.password;
+    var user_id = "(SELECT user_id from users where username = '"+req.body.username+"')"
+    var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where user_one_id ="+user_id+"  OR user_two_id = "+user_id+" AND status = 1)"
+    sql.executeSql(query , function (err, data) {
+        if (err) {
+            console.log(err)
+            return res.send({error: err});
+        }else{
+            console.log(data)
+            res.send(data);
+        }
+    })
+});
 
 app.post('/reg', function (req, res) {
     query = "select * from users where username = '" + req.body.username + "'";
