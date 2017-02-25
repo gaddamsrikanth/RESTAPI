@@ -250,7 +250,7 @@ app.post('/user/', function (req, res) {
 app.post('/friends/', function (req, res) {
     var user = req.body.username;
     var pass = req.body.password;
-    var user_id = "(SELECT user_id from users where username = '"+req.body.username+"')"
+    var user_id = "(SELECT user_id from users where username = '"+req.body.username+"')";
     var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where user_one_id ="+user_id+"  OR user_two_id = "+user_id+" AND status = 1)"
     sql.executeSql(query , function (err, data) {
         if (err) {
@@ -263,6 +263,32 @@ app.post('/friends/', function (req, res) {
     })
 });
 
+app.post('/chkRelation/',function (req,res) {
+    var user_one_id = "(SELECT user_id from users where username = '"+req.body.username+"')";
+    var user_two_id = req.body.user_id;
+
+    var query = "SELECT status FROM relationship WHERE user_one_id = "+user_one_id+" AND user_two_id = '"+user_two_id+"' OR user_one_id = '"+user_two_id+"' AND user_two_id = "+user_one_id;
+
+    sql.executeSql(query,function (err,data) {
+        if(err){
+            console.log(err);
+            res.send({resp : "error in database"});
+        }else{
+            console.log(data);
+            if(data.length == 1) {
+                if (data[0].status == 1) {
+                    res.send({resp: "friends"});
+                } else {
+                    res.send({resp: "not"});
+                }
+            } else {
+                res.send({resp: "not"});
+            }
+        }
+    });
+
+});
+
 app.post('/reg', function (req, res) {
     query = "select * from users where username = '" + req.body.username + "'";
     sql.executeSql(query, function (err, data) {
@@ -273,7 +299,7 @@ app.post('/reg', function (req, res) {
             console.log("1");
             res.send({resp : "Taken"});
         } else {
-            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.sality+"')";
+            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.locality+"')";
             console.log(query);
             sql.executeSql(query, function (err, data) {
                 if (err) {
