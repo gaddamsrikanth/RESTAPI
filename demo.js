@@ -312,6 +312,7 @@ app.post('/reg', function (req, res) {
     });
 });
 
+
 app.put('/test/:username', function (req, res) {
     sql.executeSql("update list set name='" + req.body.name + "' where username=" + req.params.username + "", function (err, data) {
         if (err) {
