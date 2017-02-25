@@ -263,6 +263,27 @@ app.post('/friends/', function (req, res) {
     })
 });
 
+app.post('/searchUser/',function (req,res) {
+    var query = "SELECT * FROM users";
+
+    sql.executeSql(query,function (err,data) {
+        if(err){
+            res.send({resp : "error"});
+        }else{
+            console.log(req.body.searchTerm);
+            var arrayFound = data.filter(function(item) {
+                if(item.username.includes(req.body.searchTerm) || item.name.includes(req.body.searchTerm)){
+                    return item
+                }
+            });
+
+            // console.log(req.body.searchTerm);
+            console.log(arrayFound);
+            res.send(arrayFound);
+        }
+    })
+});
+
 app.post('/chkRelation/',function (req,res) {
     var user_one_id = "(SELECT user_id from users where username = '"+req.body.username+"')";
     var user_two_id = req.body.user_id;
