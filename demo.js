@@ -273,7 +273,7 @@ app.post('/reg', function (req, res) {
             console.log("1");
             res.send({resp : "Taken"});
         } else {
-            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.sality+"')";
+            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.locality+"')";
             console.log(query);
             sql.executeSql(query, function (err, data) {
                 if (err) {
