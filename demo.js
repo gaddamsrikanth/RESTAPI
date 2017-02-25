@@ -272,7 +272,7 @@ app.post('/searchUser/',function (req,res) {
         }else{
             console.log(req.body.searchTerm);
             var arrayFound = data.filter(function(item) {
-                if(item.username.includes(req.body.searchTerm) || item.name.includes(req.body.searchTerm)){
+                if((item.username.includes(req.body.searchTerm) || item.name.includes(req.body.searchTerm)) && item.username != req.body.searchedby){
                     return item
                 }
             });
