@@ -9,13 +9,17 @@ var list = require('./models/listmongoose');
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
+var md5 = require('md5');
 var mailer = require('nodemailer');
 // END modules
+var sqlinjection = require('sql-injection');
+
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
 var count = 0;
+app.use(sqlinjection);
 
 var storage = multer.diskStorage({
     destination : function (req,file,callback) {
@@ -221,7 +225,7 @@ app.post('/fetchd/', function (req, res) {
             res.send({resp : "Success"});
         }
         else{
-            res.send({resp : "Failed"});
+            res.send(data);
         }
         console.log(data);
     })
@@ -343,12 +347,15 @@ app.post('/changeRelation/',function (req,res) {
             }else{
                 if(user1 > user2){
                     query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values('"+user2+"','"+user1+"','1','"+user1+"')"
+                }else{
+                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values('"+user1+"','"+user2+"','1','"+user1+"')"
                 }
             }
             sql.executeSql(query,function (err,data) {
                 if(err){
                     res.send({resp: err});
                 }else{
+                    console.log(data)
                     res.send({resp: "changed"});
                 }
             })
@@ -357,7 +364,7 @@ app.post('/changeRelation/',function (req,res) {
 });
 
 app.post('/reg', function (req, res) {
-    query = "select * from users where username = '" + req.body.username + "'";
+    query = "select * from users where username = '" + req.body.username + "' OR email_id='"+req.body.email+"'";
     sql.executeSql(query, function (err, data) {
         if (err) {
             console.log(err)
