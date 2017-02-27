@@ -9,8 +9,7 @@ var list = require('./models/listmongoose');
 var morgan = require("morgan");
 var jwt = require('jsonwebtoken');
 var multer = require('multer');
-//var file = require('./models/file');
-
+var mailer = require('nodemailer');
 // END modules
 
 var app = express();
@@ -367,7 +366,7 @@ app.post('/reg', function (req, res) {
             console.log("1");
             res.send({resp : "Taken"});
         } else {
-            query = "insert into users (name,username,password,locality) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.locality+"')";
+            query = "insert into users (name,username,password,locality,email_id) values('" + req.body.name + "','" + req.body.username + "','" + req.body.password + "','" +req.body.locality+"','" +req.body.email+"')";
             console.log(query);
             sql.executeSql(query, function (err, data) {
                 if (err) {
@@ -425,6 +424,7 @@ app.post('/loc', function (req, res) {
                     }
                     else{
                         console.log(data)
+                        console.log("A")
                         res.send("Success")
                     }
 
@@ -467,6 +467,62 @@ app.post('/login',function (req,res) {
 
 
 });
+
+app.post('/contact', function (req, res) {
+    var email = req.body.email;
+    var pass = req.body.password;
+    query = "select * from users where email_id='" + email + "'";
+    sql.executeSql(query,function (err,data) {
+        if(err){
+            console.log(err);
+        }
+        else {
+            if (data.length > 0) {
+               query =  "update users set password='" + pass + "'where email_id='"+email+"'";
+               sql.executeSql(query,function (err,data) {
+                   if(err)
+                   {
+                       console.log(err);
+                   }
+                   else {
+                       var smtpTransport = mailer.createTransport({
+                           service: "Gmail",
+                           auth: {
+                               user: "lanetteam.abhishekm@gmail.com",
+                               pass: "lanetteam1"
+                           }
+                       });
+
+                       var mail = {
+                           from: "lanetteam.abhishekm@gmail.com",
+                           to: email,
+                           subject: "YOUR PASSWORD",
+                           text: pass,
+                           html: pass
+                       }
+
+                       smtpTransport.sendMail(mail, function (error, response) {
+                           if (error) {
+                               console.log(error);
+                           } else {
+                               console.log("Message sent: " + response.message);
+                           }
+
+                           smtpTransport.close();
+                       });
+                   }
+
+               })
+
+            }
+        }
+
+    })
+
+});
+
+
+
 app.get('/chk',function (req,res) {
     res.send("Api is running ");
 });
