@@ -248,10 +248,11 @@ app.post('/user/', function (req, res) {
 });
 
 app.post('/friends/', function (req, res) {
+    console.log(req.body.username);
     var user = req.body.username;
     var pass = req.body.password;
     var user_id = "(SELECT user_id from users where username = '"+req.body.username+"')";
-    var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where user_one_id ="+user_id+"  OR user_two_id = "+user_id+" AND status = 1)"
+    var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where user_one_id = "+user_id+" OR user_two_id = "+user_id+" AND status = 1)"
     sql.executeSql(query , function (err, data) {
         if (err) {
             console.log(err)
@@ -308,6 +309,52 @@ app.post('/chkRelation/',function (req,res) {
         }
     });
 
+});
+
+app.post('/changeRelation/',function (req,res) {
+    console.log(req.body);
+    var query;
+    var user1 = "(SELECT user_id FROM users WHERE username = '"+req.body.user1+"')";
+    var user2 = "(SELECT user_id FROM users WHERE username = '"+req.body.user2+"')";
+    sql.executeSql(user1,function (err,data) {
+        if(err){
+            res.send({resp : err});
+        }else{
+            user1 = data[data.length-1].user_id;
+        }
+    });
+    sql.executeSql(user2,function (err,data) {
+        if(err){
+            res.send({resp : err});
+        }else{
+            user2 = data[data.length-1].user_id;
+        }
+    });
+    query = "SELECT * FROM relationship WHERE user_one_id = "+user1+" AND user_two_id = "+user2+" OR user_one_id = "+user2+" AND user_two_id = "+user1;
+    sql.executeSql(query,function (err,data) {
+        if(err) {
+            res.send({resp: err});
+        }else{
+            if(data.length == 1){
+                if (req.body.signal == "2"){
+                    query = "UPDATE relationship SET status = 0 WHERE user_one_id = "+user1+" AND user_two_id = "+user2+" OR user_one_id = "+user2+" AND user_two_id = "+user1;
+                }else{
+                    query = "UPDATE relationship SET status = 1 WHERE user_one_id = "+user1+" AND user_two_id = "+user2+" OR user_one_id = "+user2+" AND user_two_id = "+user1;
+                }
+            }else{
+                if(user1 > user2){
+                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values('"+user2+"','"+user1+"','1','"+user1+"')"
+                }
+            }
+            sql.executeSql(query,function (err,data) {
+                if(err){
+                    res.send({resp: err});
+                }else{
+                    res.send({resp: "changed"});
+                }
+            })
+        }
+    });
 });
 
 app.post('/reg', function (req, res) {
