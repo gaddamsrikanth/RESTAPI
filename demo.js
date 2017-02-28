@@ -407,7 +407,7 @@ app.get('/about', function (req, res) {
 });
 
 app.post('/loc', function (req, res) {
-    query = "select * from users where username='" + req.body.username + "'";
+    query = "select * from users where username='" + req.body.username + "' OR email_id = '"+req.body.email+"'";
     sql.executeSql(query, function (err, data) {
         if (err) {
             console.log(err)
