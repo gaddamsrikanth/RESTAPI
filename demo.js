@@ -12,14 +12,14 @@ var multer = require('multer');
 var md5 = require('md5');
 var mailer = require('nodemailer');
 // END modules
-var sqlinjection = require('sql-injection');
+// var sqlinjection = require('sql-injection');
 
 
 var app = express();
 var server = require('http').Server(app);
 var sql = require('./index');
 var count = 0;
-app.use(sqlinjection);
+// app.use(sqlinjection);
 
 var storage = multer.diskStorage({
     destination : function (req,file,callback) {
@@ -255,7 +255,7 @@ app.post('/friends/', function (req, res) {
     var user = req.body.username;
     var pass = req.body.password;
     var user_id = "(SELECT user_id from users where username = '"+req.body.username+"')";
-    var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where user_one_id = "+user_id+" OR user_two_id = "+user_id+" AND status = 1)"
+    var query = "SELECT * FROM users WHERE user_id IN (SELECT if(user_one_id != "+user_id+",user_one_id,if(user_two_id != "+user_id+",user_two_id,false)) from relationship where (user_one_id = "+user_id+" OR user_two_id = "+user_id+") AND status = 1)"
     sql.executeSql(query , function (err, data) {
         if (err) {
             console.log(err)
@@ -319,20 +319,6 @@ app.post('/changeRelation/',function (req,res) {
     var query;
     var user1 = "(SELECT user_id FROM users WHERE username = '"+req.body.user1+"')";
     var user2 = "(SELECT user_id FROM users WHERE username = '"+req.body.user2+"')";
-    sql.executeSql(user1,function (err,data) {
-        if(err){
-            res.send({resp : err});
-        }else{
-            user1 = data[data.length-1].user_id;
-        }
-    });
-    sql.executeSql(user2,function (err,data) {
-        if(err){
-            res.send({resp : err});
-        }else{
-            user2 = data[data.length-1].user_id;
-        }
-    });
     query = "SELECT * FROM relationship WHERE user_one_id = "+user1+" AND user_two_id = "+user2+" OR user_one_id = "+user2+" AND user_two_id = "+user1;
     sql.executeSql(query,function (err,data) {
         if(err) {
@@ -346,9 +332,9 @@ app.post('/changeRelation/',function (req,res) {
                 }
             }else{
                 if(user1 > user2){
-                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values('"+user2+"','"+user1+"','1','"+user1+"')"
+                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values("+user2+","+user1+",1,"+user1+")"
                 }else{
-                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values('"+user1+"','"+user2+"','1','"+user1+"')"
+                    query = "INSERT INTO relationship (user_one_id,user_two_id,status,action_user_id) values("+user1+","+user2+",1,"+user1+")"
                 }
             }
             sql.executeSql(query,function (err,data) {
